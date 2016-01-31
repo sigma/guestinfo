@@ -75,8 +75,8 @@ type getVersionResponse struct {
 	hvMessage
 }
 
-func (r getVersionResponse) magic() uint32 {
-	return r.hvMessage.bx()
+func (r getVersionResponse) isVMware() bool {
+	return r.hvMessage.bx() == backdoorMagic
 }
 
 func init() {
@@ -90,8 +90,7 @@ func init() {
 	res := make(chan bool, 1)
 
 	go func() {
-		magic := getVersionResponse{hvCommunicate(newGetVersionRequest())}.magic()
-		res <- (magic == backdoorMagic)
+		res <- getVersionResponse{hvCommunicate(newGetVersionRequest())}.isVMware()
 		c <- syscall.SIGILL
 	}()
 
