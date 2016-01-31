@@ -1,10 +1,6 @@
 package guestinfo
 
-import (
-	"os"
-	"os/signal"
-	"syscall"
-)
+import "github.com/sigma/bdoor"
 
 var (
 	virtualWorld = false
@@ -80,27 +76,7 @@ func (r getVersionResponse) isVMware() bool {
 }
 
 func init() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGSEGV, syscall.SIGILL)
-
-	defer func() {
-		signal.Reset(syscall.SIGSEGV, syscall.SIGILL)
-	}()
-
-	res := make(chan bool, 1)
-
-	go func() {
-		res <- getVersionResponse{hvCommunicate(newGetVersionRequest())}.isVMware()
-		c <- syscall.SIGILL
-	}()
-
-	<-c
-	select {
-	case r := <-res:
-		virtualWorld = r
-	default:
-		virtualWorld = false
-	}
+	virtualWorld = bdoor.HypervisorPortCheck()
 }
 
 // IsVirtualWorld returns whether the code is running in a VMware virtual machine or no
