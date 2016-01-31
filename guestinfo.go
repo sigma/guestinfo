@@ -52,29 +52,6 @@ func hvCommunicate(hvInput hvMessage) hvMessage {
 	return registers{_ax: oax, _bx: obx, _cx: ocx, _dx: odx, _di: odi, _si: osi}
 }
 
-type getVersionRequest struct {
-	registers
-}
-
-func newGetVersionRequest() getVersionRequest {
-	return getVersionRequest{
-		registers{
-			_ax: backdoorMagic,
-			_bx: 0xFFFFFFFF,
-			_cx: backdoorCmdGetVersion,
-			_dx: backdoorPort,
-		},
-	}
-}
-
-type getVersionResponse struct {
-	hvMessage
-}
-
-func (r getVersionResponse) isVMware() bool {
-	return r.hvMessage.bx() == backdoorMagic
-}
-
 func init() {
 	virtualWorld = bdoor.HypervisorPortCheck()
 }
