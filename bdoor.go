@@ -19,4 +19,17 @@ const (
 	backdoorMagic = 0x564D5868
 
 	backdoorCmdGetVersion = 10
+	backdoorCmdMessage    = 30
+
+	backdoorChannelUseCookie = 0x80000000
+
+	backdoorChannelOpen           = 0
+	backdoorChannelSendSize       = 1
+	backdoorChannelSendPayload    = 2
+	backdoorChannelReceiveSize    = 3
+	backdoorChannelReceivePayload = 4
+	backdoorChannelReceiveStatus  = 5
+	backdoorChannelClose          = 6
+
+	backddorChannelSuccess = 0x0001
 )

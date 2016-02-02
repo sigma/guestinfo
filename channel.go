@@ -14,7 +14,12 @@
 
 package guestinfo
 
+import "errors"
+
 type Channel struct {
+	Identifier uint32
+	CookieHigh uint32
+	CookieLow  uint32
 }
 
 type Protocol uint32
@@ -22,7 +27,16 @@ type Protocol uint32
 const RpcProtocol Protocol = 0x49435052
 
 func NewChannel(proto Protocol) *Channel {
-	return &Channel{}
+	comm := hvCommunicate(registers{
+		_bx: uint32(proto) | uint32(backdoorChannelUseCookie),
+		_cx: backdoorChannelOpen<<16 | backdoorCmdMessage,
+	})
+
+	return &Channel{
+		Identifier: comm.dx(),
+		CookieHigh: comm.si(),
+		CookieLow:  comm.di(),
+	}
 }
 
 func (c *Channel) Send(msg string) error {
@@ -31,4 +45,18 @@ func (c *Channel) Send(msg string) error {
 
 func (c *Channel) Receive() (string, error) {
 	return "", nil
+}
+
+func (c *Channel) Close() error {
+	comm := hvCommunicate(registers{
+		_cx: backdoorChannelClose<<16 | backdoorCmdMessage,
+		_dx: c.Identifier,
+		_si: c.CookieHigh,
+		_di: c.CookieLow,
+	})
+
+	if (comm.cx()>>16)&backddorChannelSuccess != 0 {
+		return nil
+	}
+	return errors.New("Failed to close channel")
 }
