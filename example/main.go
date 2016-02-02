@@ -8,7 +8,7 @@ import (
 
 func main() {
 	if guestinfo.IsVirtualWorld() {
-		fmt.Println("Runnning in", guestinfo.VMwareProduct().Name())
+		fmt.Println("Runnning in", guestinfo.VMwareProduct())
 	} else {
 		fmt.Println("Not running in a VMware Virtual Machine")
 	}

@@ -27,7 +27,7 @@ const (
 	ACE
 )
 
-// Name returns the name of the product
-func (p Product) Name() string {
+// String returns the name of the product
+func (p Product) String() string {
 	return productCodes[p]
 }
