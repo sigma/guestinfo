@@ -22,3 +22,11 @@ type getVersionResponse struct {
 func (r getVersionResponse) isVMware() bool {
 	return r.hvMessage.bx() == backdoorMagic
 }
+
+func (r getVersionResponse) getProduct() Product {
+	code := r.hvMessage.cx()
+	if code > uint32(len(productCodes)) {
+		code = 0
+	}
+	return Product(code)
+}

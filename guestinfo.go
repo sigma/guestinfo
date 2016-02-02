@@ -14,3 +14,7 @@ func init() {
 func IsVirtualWorld() bool {
 	return virtualWorld
 }
+
+func VMwareProduct() Product {
+	return getVersionResponse{hvCommunicate(newGetVersionRequest())}.getProduct()
+}
